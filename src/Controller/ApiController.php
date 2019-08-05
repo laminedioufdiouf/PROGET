@@ -42,11 +42,6 @@ class ApiController extends AbstractController
     public function compte(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager)
     {
         $compte = $serializer->deserialize($request->getContent(), Compte::class, 'json');
-        //sa me permet de retourner le repository du partenaire
-        $repository = $this->getDoctrine()->getRepository(Partenaire::class);
-        //$values->Partenaire me permet de recuperer l'id du partenaire
-        //$repository ->find permet de retourner l'objet de type partenaire && $partenaire est le type partenaire
-        $partenaire=$repository->find($values->Partenaire);
 
         $entityManager->persist($compte);
         $entityManager->flush();
