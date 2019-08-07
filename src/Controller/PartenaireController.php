@@ -57,8 +57,23 @@ class PartenaireController extends AbstractController
             $user = new User();
             $user->setUsername($values->username);
             $user->setPassword($passwordEncoder->encodePassword($user, $values->password));
+           
             $user->setProfil($values->profil);
-            $user->setRoles(['ROLE_ADMIN']);
+            $profil=$user->getProfil();
+           
+            if($profil =="admin"){
+                $roles=["ROLE_ADMIN"];
+            }
+            elseif($profil == "superadmin"){
+                $roles=["ROLE_SUPER_ADMIN"];
+            }
+            elseif($profil == "user"){
+                $roles=["ROLE_USER"];
+            }
+            elseif($profil == "caissier"){
+                $roles=["ROLE_CAISSIER"];
+            } 
+            $user->setRoles([$roles]);
             $user->setNom($values->nom);
             $user->setAdresse($values->adresse);
             $user->setEmail($values->email);
