@@ -37,11 +37,23 @@ class PartenaireController extends AbstractController
             $partenaire->setStatut($values->statut);
             //creer un compte
             $compte = new Compte();
-            $compte->setNumerocompte($values->numerocompte);
+            $random= random_int(300000, 600000);
+            $compte->setNumerocompte("$random");
             $compte->setMontant($values->montant);
              // relates this product to the category
              $compte->setPartenaire($partenaire);
-             // administrateur du partenaire
+             //faire un depot
+             $depot = new Depot();
+             $depot->setDatedepot(new \DateTime);
+            $depot->setSolde($values->solde);
+            $depot->setCompte($compte);
+
+             $errors = $validator->validate($compte);
+        if (count($errors)) {
+            $errors = $serializer->serialize($errors, 'json');
+            return new Response($errors, 500, ['Conten-Type' => 'Application/json']);
+        }
+             // admini$compte->setPartenaire($partenaire);strateur du partenaire
             $user = new User();
             $user->setUsername($values->username);
             $user->setPassword($passwordEncoder->encodePassword($user, $values->password));
@@ -51,14 +63,17 @@ class PartenaireController extends AbstractController
             $user->setAdresse($values->adresse);
             $user->setEmail($values->email);
             $user->setTelephone($values->telephone);
-            $user->setPhoto($values->photo);
+            
 
             $user->setPartenaire($partenaire);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($partenaire);
             $entityManager->persist($compte);
+            $entityManager->persist($depot);
             $entityManager->persist($user);
+            
+
             $entityManager->flush();
 
              $data = [

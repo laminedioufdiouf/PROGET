@@ -64,11 +64,7 @@ class User implements UserInterface
      */
     private $profil;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $photo;
-
+   
     public function getId(): ?int
     {
         return $this->id;
@@ -214,15 +210,5 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getPhoto(): ?string
-    {
-        return $this->photo;
-    }
-
-    public function setPhoto(string $photo): self
-    {
-        $this->photo = $photo;
-
-        return $this;
-    }
+   
 }

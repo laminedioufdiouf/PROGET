@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,6 +28,10 @@ class Compte
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Range(
+     * min = 75000,
+     * minMessage = "le montant minimum doit etre superieur ou egale a 75000",
+     * )
      */
     private $montant;
 
