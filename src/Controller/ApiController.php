@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Depot;
 use App\Entity\Compte;
 use App\Entity\Partenaire;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,6 +37,21 @@ class ApiController extends AbstractController
         ];
         return new JsonResponse($data, 201);
     }
+            //=======depotUser ligne par ligne=======// 
+    /**
+     * @Route("/User", name="add_user", methods={"POST"})
+     */
+   public function user(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager)
+    { 
+        $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+        $entityManager->persist($user);
+        $entityManager->flush();
+        $data = [
+            'statut' => 201,
+            'messager' => 'Le user a bien été ajouté'
+        ];
+        return new JsonResponse($data, 201);
+    }
 
      /**
      * @Route("/Compte", name="add_compte", methods={"POST"})
@@ -54,19 +70,11 @@ class ApiController extends AbstractController
    
 
      /**
-     * @Route("/partenaires", name="add_partenaire", methods={"POST"})
-     
+     * @Route("/Partenaire", name="add_partenaire", methods={"POST"})
      */
-    public function ajoutpartenaire(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, ValidatorInterface $validator)
+    public function ajoutpartenaire(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager)
     {
         $partenaire = $serializer->deserialize($request->getContent(), Partenaire::class, 'json');
-        $errors = $validator->validate($partenaire);
-        if(count($errors)) {
-            $errors = $serializer->serialize($errors, 'json');
-            return new Response($errors, 500, [
-                'Content-Type' => 'application/json'
-            ]);
-        }
         $entityManager->persist($partenaire);
         $entityManager->flush();
         $data = [

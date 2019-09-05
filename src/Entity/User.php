@@ -50,7 +50,7 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string" ,length=255)
      */
     private $telephone;
 
@@ -94,7 +94,7 @@ class User implements UserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = '';
 
         return array_unique($roles);
     }
@@ -174,12 +174,12 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getTelephone(): ?int
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
 
-    public function setTelephone(int $telephone): self
+    public function setTelephone(string $telephone): self
     {
         $this->telephone = $telephone;
 

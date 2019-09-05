@@ -23,6 +23,9 @@ use FOS\RestBundle\Controller\Annotations as Rest; // alias pour toutes les anno
  */
 class PartenaireController extends AbstractController
 {
+   
+
+
     /** 
      * @Route("/Partenaire", name="partenaire",  methods={"POST"})
      */

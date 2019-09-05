@@ -3,30 +3,81 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Entity\Partenaire;
-use App\Entity\Compte;
 use App\Entity\Depot;
+use App\Entity\Compte;
 use App\Form\UserType;
 use App\Form\DepotType;
 use App\Form\CompteType;
+use App\Entity\Partenaire;
 use App\Form\PartenaireType;
+use App\Repository\PartenaireRepository;
+use App\Repository\UserRepository;
+use App\Repository\DepotRepository;
+use App\Repository\CompteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-
+use FOS\RestBundle\Controller\Annotations as Rest; // alias pour toutes les annotations
     /**
     * @Route("/api")
     */
 
-class SecurityController extends AbstractController
+class SecurityController extends FOSRestController
 {
-   
+               //==========lister_partenaire============//
+    /**
+     * @Rest\Get("/partenaire", name="find_partenaire")
+     */
+    public function index()
+    {
+        $repo = $this->getDoctrine()->getRepository(Partenaire::class);
+        $partenaire = $repo->findAll();
+
+        return $this->handleView($this->view($partenaire));
+    }
+            //==========lister_user============//
+    /**
+     * @Rest\Get("/user", name="find_user")
+     */
+    public function indexee()
+    {
+        $repo = $this->getDoctrine()->getRepository(User::class);
+        $user = $repo->findAll();
+
+        return $this->handleView($this->view($user));
+    }
+
+            //==========lister_depot============//
+    /**
+     * @Rest\Get("/depot", name="find_depot")
+     */
+    public function indexe()
+    {
+        $repo = $this->getDoctrine()->getRepository(Depot::class);
+        $depot = $repo->findAll();
+
+        return $this->handleView($this->view($depot));
+    }
+            //==========lister_compte============//
+    /**
+     * @Rest\Get("/compte", name="find_compte")
+     */
+    public function listCompte()
+    {
+        $repo = $this->getDoctrine()->getRepository(Compte::class);
+        $compte = $repo->findAll();
+
+        return $this->handleView($this->view($compte));
+    }
+
+
      /**
      * @Route("/register", name="register", methods={"POST"})
      */
@@ -55,8 +106,6 @@ class SecurityController extends AbstractController
                 $roles=["ROLE_CAISSIER"];
             } 
             
-
-
             $user->setRoles(['']);
             $user->setNom($values->nom);
             $user->setAdresse($values->adresse);
@@ -90,7 +139,7 @@ class SecurityController extends AbstractController
         }
 
         /**
-        * @Route("/login", name="login", methods={"POST"})
+        * @Route("/login_check", name="login", methods={"POST"})
         */
         public function login(Request $request)
         {
@@ -100,20 +149,18 @@ class SecurityController extends AbstractController
             'roles' => $user->getRoles()
             ]);
         }
-
-
     /**   
      * @Route("/Entreprise", name="app_entreprise", methods={"POST"})
      */
     public function addadmin(Request $request, UserPasswordEncoderInterface $passwordEncoder,EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
-        
-        
+          
         $random= random_int(300000, 600000);
         $partenaire = new Partenaire();
         $form = $this->createForm(PartenaireType::class, $partenaire);
         $form->handleRequest($request);
         $data = $request->request->all();
+        //$data=json_decode($request->getContent(),true);
         $form->submit($data);
         $partenaire->setStatut('Debloquer');
 
@@ -123,7 +170,7 @@ class SecurityController extends AbstractController
         $data = $request->request->all();
         $form->submit($data);
         $compte->setNumerocompte($random);
-       
+
         // relates this product to the category
         $compte->setPartenaire($partenaire);
         $errors = $validator->validate($compte);
